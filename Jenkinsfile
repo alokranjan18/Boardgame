@@ -1,15 +1,15 @@
 pipeline {
-    agent any
+    agent { label 'agent-1'}
     
     tools {
+        maven 'maven3.9'
         jdk 'jdk17'
-        maven 'maven3'
     }
-    
-    stages {   
+
+    stages {
         stage('Compile') {
             steps {
-            sh 'mvn compile'
+             sh 'mvn compile'
             }
         }
         
