@@ -1,16 +1,17 @@
 # ===== Build Stage =====
 FROM maven:3.9.9-eclipse-temurin-17 AS build
-WORKDIR /app
+
+WORKDIR /app 
 # rrr
 # Copy pom.xml first to leverage Docker layer caching
 COPY pom.xml .
-
+  
 # Pre-download dependencies (faster rebuilds)
 RUN mvn -B -q -DskipTests dependency:go-offline
 
 # Copy project source
 COPY src ./src
-
+ 
 # Build the JAR (skip tests for faster build)
 RUN mvn clean package -DskipTests
 
