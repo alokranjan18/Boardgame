@@ -1,0 +1,85 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1571.vb_423c255d6d9">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@2.2277.v00573e73ddf1"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@2.2277.v00573e73ddf1">
+      <jobProperties/>
+      <triggers/>
+      <parameters>
+        <string>DEPLOY_ENV</string>
+        <string>RUN_TESTS</string>
+      </parameters>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>DEPLOY_ENV</name>
+          <description>Enviourment to deploy to</description>
+          <defaultValue>dev</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_TESTS</name>
+          <description>Run Tests</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@4257.vb_2e202808577">
+    <script>pipeline {
+    agent any
+    parameters {
+        string(name:&apos;DEPLOY_ENV&apos;, defaultValue:&apos;dev&apos;, description:&apos;Enviourment to deploy to&apos;)
+        booleanParam(name:&apos;RUN_TESTS&apos;, defaultValue:true, description:&apos;Run Tests&apos;)
+    }
+    environment {
+        REGION= &apos;ap-south-1&apos;
+        BUILD_VERSION= &quot;1.0.${env.BUILD_NUMBER}&quot;
+    }
+
+    stages {
+        stage(&apos;Built-In Vars&apos;) {
+            steps {
+                echo &quot;Build Number: ${env.BUILD_NUMBER}&quot;
+                echo &quot;Build ID: ${env.BUILD_ID}&quot;
+                echo &quot;Job Name: ${env.JOB_NAME}&quot;
+                echo &quot;Build URL: ${env.BUILD_URL}&quot;
+                echo &quot;Workspace: ${env.WORKSPACE}&quot;
+                echo &quot;Node Name: ${env.NODE_NAME}&quot;
+                echo &quot;Build Name: ${env.BUILD_NAME}&quot;
+            }
+        }
+        stage(&apos;Pipeline Parameter&apos;) {
+            steps {
+                echo &quot;Deploy Env: ${params.DEPLOY_ENV}&quot;
+                echo &quot;Run Tests: ${params.RUN_TESTS}&quot;
+            }
+        }
+        stage(&apos;Custom Vars..&apos;) {
+            steps {
+                echo &quot;REGION: ${env.REGION}&quot;
+                echo &quot;BUILD_VERSION: ${env.BUILD_VERSION}&quot;
+            }
+        }
+        stage(&apos;Dynamic Coustom ar&apos;) {
+            steps {
+                script{
+                env.RUNTIME_VAR= &quot;RUNTIME-${env.BUILD_NUMBER}&quot;
+                echo &quot;DYNAMIC: ${env.RUNTIME_VAR}&quot;
+                }
+            }
+        }
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
